@@ -378,60 +378,8 @@ function setupNumericInputs() {
 }
 
 // =========================================================================
-// 2. SIMULASI ROLE (OWNER & ADMIN)
+// 2. SIMULASI ROLE (DIHAPUS - DIGANTIKAN OLEH SERVER-SIDE RBAC)
 // =========================================================================
-const ROLE_STORAGE_KEY = 'jne_simulated_role';
-
-function getCurrentRole() {
-    return localStorage.getItem(ROLE_STORAGE_KEY) || 'Owner';
-}
-
-function setSimulatedRole(role) {
-    localStorage.setItem(ROLE_STORAGE_KEY, role);
-    applyRoleSimulation();
-}
-
-/**
- * Menerapkan hak akses pada tampilan berdasarkan role yang dipilih
- * TODO BACKEND: ganti dengan middleware hak akses sungguhan di sisi server
- */
-function applyRoleSimulation() {
-    const currentRole = getCurrentRole();
-    const roleSelector = document.getElementById('roleSimulatorSelect');
-    const roleBadge = document.getElementById('currentRoleBadge');
-
-    if (roleSelector) {
-        roleSelector.value = currentRole;
-    }
-    if (roleBadge) {
-        roleBadge.textContent = currentRole;
-        if (currentRole === 'Owner') {
-            roleBadge.className = 'badge bg-primary text-white';
-        } else {
-            roleBadge.className = 'badge bg-warning text-dark';
-        }
-    }
-
-    // Elemen yang hanya boleh dilihat oleh Owner
-    const ownerOnlyElements = document.querySelectorAll('[data-role="owner-only"]');
-    ownerOnlyElements.forEach(el => {
-        if (currentRole === 'Admin') {
-            el.style.display = 'none';
-        } else {
-            el.style.display = '';
-        }
-    });
-
-    // Peringatan banner jika Admin membuka halaman Owner
-    const adminBanner = document.getElementById('adminRestrictedAlert');
-    if (adminBanner) {
-        if (currentRole === 'Admin') {
-            adminBanner.classList.remove('d-none');
-        } else {
-            adminBanner.classList.add('d-none');
-        }
-    }
-}
 
 // =========================================================================
 // 3. FLATPICKR INITIALIZATION (LOCALE INDONESIA, FORMAT dd-mm-yyyy)
@@ -817,31 +765,22 @@ function setupPackingListCalculator() {
 // DOM READY INITIALIZATION
 // =========================================================================
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. Role Simulation
-    applyRoleSimulation();
-    const roleSelector = document.getElementById('roleSimulatorSelect');
-    if (roleSelector) {
-        roleSelector.addEventListener('change', function () {
-            setSimulatedRole(this.value);
-        });
-    }
-
-    // 2. Setup Rupiah & Numeric formatting
+    // 1. Setup Rupiah & Numeric formatting
     setupRupiahInputs();
     setupNumericInputs();
 
-    // 3. Flatpickr
+    // 2. Flatpickr
     initDatePickers();
 
-    // 4. Modal Hapus Data
+    // 3. Modal Hapus Data
     setupDeleteConfirmation();
 
-    // 5. Search & Pagination Tabel
+    // 4. Search & Pagination Tabel
     setupTableSearchAndPagination();
 
-    // 6. Sidebar Mobile Toggle
+    // 5. Sidebar Mobile Toggle
     setupSidebarToggle();
 
-    // 7. Packing List Calculator
+    // 6. Packing List Calculator
     setupPackingListCalculator();
 });

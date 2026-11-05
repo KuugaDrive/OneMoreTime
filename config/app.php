@@ -13,7 +13,11 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Sistem Administrasi Keuangan'),
+
+    'nama_usaha' => env('NAMA_USAHA', 'Agen Resmi JNE'),
+
+    'logo_path' => env('APP_LOGO_PATH', null),
 
     /*
     |--------------------------------------------------------------------------

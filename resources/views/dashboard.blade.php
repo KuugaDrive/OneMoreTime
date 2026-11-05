@@ -1,21 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Ringkasan')
+@section('title', 'Dashboard')
 
 @section('content')
-<div class="page-header flex-wrap gap-2">
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h1 class="page-title">
-            <i class="bi bi-speedometer2 text-primary"></i> Dashboard Ringkasan
-        </h1>
-        <p class="page-subtitle">Ringkasan performa komisi harian packing list, biaya operasional, dan estimasi laba bersih agen.</p>
+        <h1 class="page-title">Dashboard Ringkasan</h1>
+        <p class="page-subtitle">Ringkasan performa komisi harian packing list, pengeluaran operasional, dan estimasi laba bersih.</p>
     </div>
     <div class="d-flex align-items-center gap-2">
-        <!-- Filter Cabang Sederhana (BAGIAN A.8) -->
+        <!-- Filter Cabang -->
         <form method="GET" action="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 m-0">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text bg-white"><i class="bi bi-buildings"></i></span>
-                <select name="id_cab" class="form-select form-select-sm" onchange="this.form.submit()">
+            <div class="input-group input-group-sm" style="min-width: 220px;">
+                <span class="input-group-text bg-white border-end-0 text-secondary"><i class="bi bi-buildings"></i></span>
+                <select name="id_cab" class="form-select form-select-sm border-start-0 ps-0" onchange="this.form.submit()">
                     <option value="all" {{ empty($idCab) || $idCab === 'all' ? 'selected' : '' }}>Semua Cabang</option>
                     @foreach($cabangs as $cab)
                     <option value="{{ $cab->id_cab }}" {{ ($idCab ?? '') === $cab->id_cab ? 'selected' : '' }}>
@@ -25,116 +23,118 @@
                 </select>
             </div>
         </form>
-        <a href="{{ route('transaksi.packing-list') }}" class="btn btn-primary btn-sm px-3 shadow-sm text-nowrap">
-            <i class="bi bi-plus-circle me-1"></i> Transaksi PL
+        <a href="{{ route('transaksi.packing-list') }}" class="btn btn-primary btn-sm px-3 text-nowrap">
+            <i class="bi bi-plus me-1"></i> Packing List
         </a>
     </div>
 </div>
 
 <!-- =========================================================================
-     RINGKASAN STATISTIK
+     RINGKASAN METRIK KEUANGAN
      ========================================================================= -->
 <div class="row g-3 mb-4">
     <!-- Kartu 1: Total Komisi PL (Disc Charge) -->
     <div class="col-12 col-sm-6 col-xl-4">
-        <div class="stat-card stat-card-blue">
-            <div class="stat-icon"><i class="bi bi-wallet2"></i></div>
-            <div class="stat-title">Total Komisi PL (Disc Charge)</div>
-            <div class="stat-value" id="cardTotalKomisiPL">Rp {{ number_format($summary['total_komisi_pl'], 2, ',', '.') }}</div>
-            <div class="stat-desc">
-                <i class="bi bi-check-circle me-1"></i> Komisi agen dari {{ $summary['total_trx_pl'] }} transaksi ({{ $summary['total_paket'] }} paket)
+        <div class="metric-card-flat">
+            <div class="metric-title">Komisi PL (Disc Charge)</div>
+            <div class="metric-value text-dark" id="cardTotalKomisiPL">
+                Rp {{ number_format($summary['total_komisi_pl'], 2, ',', '.') }}
+            </div>
+            <div class="metric-note">
+                Dari {{ $summary['total_trx_pl'] }} transaksi ({{ $summary['total_paket'] }} paket)
             </div>
         </div>
     </div>
 
     <!-- Kartu 2: Total Grand Total PL (Setoran ke JNE) -->
     <div class="col-12 col-sm-6 col-xl-4">
-        <div class="stat-card stat-card-cyan">
-            <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
-            <div class="stat-title">Total Grand Total PL (Setoran ke JNE)</div>
-            <div class="stat-value" id="cardTotalGrandTotalPL">Rp {{ number_format($summary['total_grand_total_pl'], 2, ',', '.') }}</div>
-            <div class="stat-desc">
-                <i class="bi bi-arrow-up-right-circle me-1"></i> Estimasi setoran ke JNE (Total &minus; Disc &minus; eVoucher)
+        <div class="metric-card-flat">
+            <div class="metric-title">Setoran ke JNE (Grand Total)</div>
+            <div class="metric-value text-dark" id="cardTotalGrandTotalPL">
+                Rp {{ number_format($summary['total_grand_total_pl'], 2, ',', '.') }}
+            </div>
+            <div class="metric-note">
+                Total bruto dikurangi diskon &amp; e-voucher
             </div>
         </div>
     </div>
 
-    <!-- Kartu 3: Total Operasional (Owner Only) -->
+    <!-- Kartu 3: Total Operasional -->
     <div class="col-12 col-sm-6 col-xl-4">
-        <div class="stat-card stat-card-rose">
-            <div class="stat-icon"><i class="bi bi-receipt-cutoff"></i></div>
-            <div class="stat-title">Total Biaya Operasional</div>
-            <div class="stat-value" id="cardTotalOps">Rp {{ number_format($summary['total_operasional'], 2, ',', '.') }}</div>
-            <div class="stat-desc">
-                <i class="bi bi-arrow-down-circle me-1"></i> Dari {{ $summary['total_trx_ops'] }} catatan operasional
+        <div class="metric-card-flat">
+            <div class="metric-title">Biaya Operasional</div>
+            <div class="metric-value text-dark" id="cardTotalOps">
+                Rp {{ number_format($summary['total_operasional'], 2, ',', '.') }}
+            </div>
+            <div class="metric-note">
+                Dari {{ $summary['total_trx_ops'] }} catatan pengeluaran
             </div>
         </div>
     </div>
 
-    <!-- Kartu 4: Laba Bersih (Owner Only) -->
+    <!-- Kartu 4: Laba Bersih -->
     <div class="col-12 col-sm-6 col-xl-6">
-        <div class="stat-card stat-card-emerald">
-            <div class="stat-icon"><i class="bi bi-graph-up-arrow"></i></div>
-            <div class="stat-title">Estimasi Laba Bersih</div>
-            <div class="stat-value" id="cardLabaBersih">Rp {{ number_format($summary['laba_bersih'], 2, ',', '.') }}</div>
-            <div class="stat-desc">
-                <i class="bi bi-calculator me-1"></i> {{ $summary['config']['rumus_keterangan'] ?? 'Laba Bersih = Komisi PL (Disc Charge) - Biaya Operasional' }}
+        <div class="metric-card-flat">
+            <div class="metric-title">Estimasi Laba Bersih</div>
+            <div class="metric-value {{ $summary['laba_bersih'] >= 0 ? 'text-success' : 'text-danger' }}" id="cardLabaBersih">
+                Rp {{ number_format($summary['laba_bersih'], 2, ',', '.') }}
+            </div>
+            <div class="metric-note">
+                {{ $summary['config']['rumus_keterangan'] ?? 'Laba Bersih = Komisi PL - Biaya Operasional' }}
             </div>
         </div>
     </div>
 
-    <!-- Kartu 5: Total Komisi Bulanan Ditransfer (Owner Only) -->
+    <!-- Kartu 5: Total Komisi Bulanan -->
     <div class="col-12 col-sm-6 col-xl-6">
-        <div class="stat-card stat-card-amber">
-            <div class="stat-icon"><i class="bi bi-bank"></i></div>
-            <div class="stat-title">Total Komisi Bulanan</div>
-            <div class="stat-value" id="cardTotalKomisi">Rp {{ number_format($summary['total_komisi'], 2, ',', '.') }}</div>
-            <div class="stat-desc">
-                <i class="bi bi-info-circle me-1"></i> Akumulasi pencairan transfer pusat {{ !empty($summary['config']['include_komisi']) ? '(Dihitung ke Laba Bersih)' : '(Tidak dihitung ke Laba Bersih)' }}
+        <div class="metric-card-flat">
+            <div class="metric-title">Komisi Bulanan Ditransfer</div>
+            <div class="metric-value text-dark" id="cardTotalKomisi">
+                Rp {{ number_format($summary['total_komisi'], 2, ',', '.') }}
+            </div>
+            <div class="metric-note">
+                {{ !empty($summary['config']['include_komisi']) ? 'Termasuk dalam perhitungan laba bersih' : 'Tidak dihitung dalam rumus laba bersih' }}
             </div>
         </div>
     </div>
 </div>
 
 <!-- =========================================================================
-     TABEL RINGKASAN PER CABANG (BAGIAN A.8)
+     TABEL RINGKASAN PER CABANG
      ========================================================================= -->
 <div class="card-app mb-4">
-    <div class="card-header bg-white">
-        <span class="d-flex align-items-center gap-2 text-primary fw-bold">
-            <i class="bi bi-buildings-fill"></i>
-            Ringkasan Keuangan per Cabang
-        </span>
+    <div class="card-header py-2 px-3">
+        <span class="fw-semibold text-dark" style="font-size: 13px;">Ringkasan Keuangan per Cabang</span>
     </div>
     <div class="table-responsive">
         <table class="table table-app align-middle mb-0">
             <thead>
                 <tr>
-                    <th style="width: 50px;">No</th>
-                    <th>Kode Cabang</th>
+                    <th style="width: 45px;">No</th>
+                    <th>Kode</th>
                     <th>Nama Cabang</th>
                     <th class="text-end">Komisi PL (Disc Charge)</th>
-                    <th class="text-end">Grand Total (Setoran JNE)</th>
-                    <th class="text-end">Total Operasional</th>
+                    <th class="text-end">Setoran ke JNE</th>
+                    <th class="text-end">Operasional</th>
                     <th class="text-end">Laba Bersih</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($ringkasanCabang as $idx => $rc)
                 <tr>
-                    <td>{{ $idx + 1 }}</td>
-                    <td><span class="badge bg-light text-dark border fw-bold">{{ $rc['id_cab'] }}</span></td>
-                    <td class="fw-semibold">{{ $rc['nama_cabang'] }}</td>
-                    <td class="text-end text-primary fw-bold">Rp {{ number_format($rc['total_komisi_pl'], 2, ',', '.') }}</td>
-                    <td class="text-end text-secondary">Rp {{ number_format($rc['total_grand_total_pl'], 2, ',', '.') }}</td>
-                    <td class="text-end text-danger fw-bold">Rp {{ number_format($rc['total_ops'], 2, ',', '.') }}</td>
-                    <td class="text-end fw-bold {{ $rc['laba_bersih'] >= 0 ? 'text-success' : 'text-danger' }}">
+                    <td class="row-number text-secondary">{{ $idx + 1 }}</td>
+                    <td><span class="font-monospace text-dark fw-medium">{{ $rc['id_cab'] }}</span></td>
+                    <td class="fw-medium text-dark">{{ $rc['nama_cabang'] }}</td>
+                    <td class="text-end tabular-nums">Rp {{ number_format($rc['total_komisi_pl'], 2, ',', '.') }}</td>
+                    <td class="text-end tabular-nums text-secondary">Rp {{ number_format($rc['total_grand_total_pl'], 2, ',', '.') }}</td>
+                    <td class="text-end tabular-nums text-secondary">Rp {{ number_format($rc['total_ops'], 2, ',', '.') }}</td>
+                    <td class="text-end tabular-nums fw-semibold {{ $rc['laba_bersih'] >= 0 ? 'text-success' : 'text-danger' }}">
                         Rp {{ number_format($rc['laba_bersih'], 2, ',', '.') }}
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="text-center py-3 text-muted">Belum ada data cabang</td>
+                    <td colspan="7" class="text-center py-3 text-secondary">Belum ada data cabang</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -145,16 +145,13 @@
 <!-- =========================================================================
      TABEL AKTIVITAS TERKINI
      ========================================================================= -->
-<div class="row g-4">
+<div class="row g-3">
     <!-- Transaksi Packing List Terkini -->
     <div class="col-12 col-lg-7">
-        <div class="card-app">
-            <div class="card-header">
-                <span class="d-flex align-items-center gap-2">
-                    <i class="bi bi-clock-history text-primary"></i>
-                    Transaksi Packing List Terakhir
-                </span>
-                <a href="{{ route('transaksi.packing-list') }}" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.78rem;">
+        <div class="card-app h-100">
+            <div class="card-header d-flex justify-content-between align-items-center py-2 px-3">
+                <span class="fw-semibold text-dark" style="font-size: 13px;">Packing List Terkini</span>
+                <a href="{{ route('transaksi.packing-list') }}" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 12px;">
                     Lihat Semua
                 </a>
             </div>
@@ -165,22 +162,22 @@
                             <th>Kode Trx</th>
                             <th>Cabang</th>
                             <th>Tanggal</th>
-                            <th>Jml Paket</th>
+                            <th>Paket</th>
                             <th class="text-end">Grand Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($recentPL as $pl)
                         <tr>
-                            <td><span class="badge bg-light text-dark border">{{ $pl['kode_trx_pl'] }}</span></td>
-                            <td><span class="badge bg-light text-primary border">{{ $pl['nama_cabang'] }}</span></td>
-                            <td>{{ $pl['tanggal_pl'] }}</td>
-                            <td><span class="badge bg-secondary">{{ $pl['jumlah_paket'] }} paket</span></td>
-                            <td class="text-end fw-bold text-primary">Rp {{ number_format($pl['grand_total'], 2, ',', '.') }}</td>
+                            <td><span class="font-monospace text-dark">{{ $pl['kode_trx_pl'] }}</span></td>
+                            <td><span class="text-dark">{{ $pl['nama_cabang'] }}</span></td>
+                            <td class="tabular-nums">{{ $pl['tanggal_pl'] }}</td>
+                            <td class="tabular-nums">{{ $pl['jumlah_paket'] }}</td>
+                            <td class="text-end tabular-nums fw-medium text-dark">Rp {{ number_format($pl['grand_total'], 2, ',', '.') }}</td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center py-3 text-muted">Belum ada data transaksi PL</td>
+                            <td colspan="5" class="text-center py-3 text-secondary">Belum ada transaksi</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -191,13 +188,10 @@
 
     <!-- Transaksi Operasional Terkini -->
     <div class="col-12 col-lg-5">
-        <div class="card-app">
-            <div class="card-header">
-                <span class="d-flex align-items-center gap-2">
-                    <i class="bi bi-receipt text-danger"></i>
-                    Biaya Operasional Terakhir
-                </span>
-                <a href="{{ route('transaksi.operasional') }}" class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.78rem;">
+        <div class="card-app h-100">
+            <div class="card-header d-flex justify-content-between align-items-center py-2 px-3">
+                <span class="fw-semibold text-dark" style="font-size: 13px;">Biaya Operasional Terkini</span>
+                <a href="{{ route('transaksi.operasional') }}" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 12px;">
                     Lihat Semua
                 </a>
             </div>
@@ -214,14 +208,14 @@
                     <tbody>
                         @forelse($recentOps as $ops)
                         <tr>
-                            <td><span class="badge bg-light text-dark border">{{ $ops['kode_trx_ops'] }}</span></td>
-                            <td><span class="badge bg-light text-primary border">{{ $ops['nama_cabang'] }}</span></td>
-                            <td>{{ $ops['beban_ops'] }}</td>
-                            <td class="text-end fw-bold text-danger">Rp {{ number_format($ops['nominal'], 2, ',', '.') }}</td>
+                            <td><span class="font-monospace text-dark">{{ $ops['kode_trx_ops'] }}</span></td>
+                            <td><span class="text-dark">{{ $ops['nama_cabang'] }}</span></td>
+                            <td><span class="text-secondary text-truncate d-inline-block" style="max-width: 130px;">{{ $ops['beban_ops'] }}</span></td>
+                            <td class="text-end tabular-nums fw-medium text-dark">Rp {{ number_format($ops['nominal'], 2, ',', '.') }}</td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center py-3 text-muted">Belum ada data transaksi operasional</td>
+                            <td colspan="4" class="text-center py-3 text-secondary">Belum ada pengeluaran</td>
                         </tr>
                         @endforelse
                     </tbody>

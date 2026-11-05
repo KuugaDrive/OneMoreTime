@@ -2,16 +2,16 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Laporan JNE')</title>
+    <title>@yield('title', 'Laporan Keuangan')</title>
     <style>
         @page {
-            margin: 28px 32px 35px 32px;
-            size: A4 portrait;
+            margin: 24px 28px 28px 28px;
+            size: @yield('page-size', 'A4 portrait');
         }
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 11px;
-            color: #1f2937;
+            font-family: 'DejaVu Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 9.5px;
+            color: #1F2933;
             line-height: 1.35;
             background-color: #ffffff;
             margin: 0;
@@ -21,53 +21,52 @@
         /* Kop Surat Resmi */
         .kop-table {
             width: 100%;
-            border-bottom: 2px solid #dc2626;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
+            border-bottom: 1.5px solid #1F4E79;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
         }
         .kop-table td {
-            vertical-align: middle;
+            vertical-align: top;
         }
         .brand-title {
-            font-size: 16px;
+            font-size: 13.5px;
             font-weight: bold;
-            color: #1e3a8a;
+            color: #1F4E79;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
         .report-title {
-            font-size: 13px;
+            font-size: 11.5px;
             font-weight: bold;
-            color: #dc2626;
+            color: #1F2933;
             margin-top: 2px;
             letter-spacing: 0.3px;
         }
         .kop-meta {
-            font-size: 9px;
-            color: #6b7280;
-            line-height: 1.3;
+            font-size: 8.5px;
+            color: #5B6672;
+            line-height: 1.35;
         }
         .period-badge {
-            background-color: #f3f4f6;
-            border: 1px solid #e5e7eb;
-            padding: 5px 10px;
-            border-radius: 4px;
+            background-color: #F4F5F7;
+            border: 1px solid #D9DDE3;
+            padding: 4px 8px;
+            border-radius: 3px;
             display: inline-block;
-            font-size: 10px;
-            font-weight: normal;
-            color: #111827;
-            margin-bottom: 12px;
+            font-size: 9px;
+            color: #1F2933;
+            margin-bottom: 10px;
         }
 
         /* Section Title */
         .section-header {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
-            color: #1e3a8a;
-            border-bottom: 1px solid #cbd5e1;
-            padding-bottom: 4px;
-            margin-top: 14px;
-            margin-bottom: 8px;
+            color: #1F4E79;
+            border-bottom: 1px solid #D9DDE3;
+            padding-bottom: 3px;
+            margin-top: 12px;
+            margin-bottom: 6px;
             text-transform: uppercase;
         }
 
@@ -75,56 +74,56 @@
         table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 14px;
-            font-size: 10px;
+            margin-bottom: 12px;
+            font-size: 8.5px;
         }
         table.data-table th, table.data-table td {
-            border: 1px solid #d1d5db;
-            padding: 5px 7px;
+            border: 1px solid #D9DDE3;
+            padding: 4px 6px;
             vertical-align: middle;
         }
         table.data-table th {
-            background-color: #f8fafc;
-            color: #334155;
+            background-color: #F4F5F7;
+            color: #1F2933;
             font-weight: bold;
             text-align: left;
         }
         table.data-table tfoot th, table.data-table tfoot td {
-            background-color: #f1f5f9;
+            background-color: #F8F9FA;
             font-weight: bold;
         }
         table.data-table tr:nth-child(even) td {
-            background-color: #fafafa;
+            background-color: #FAFBFC;
         }
 
         /* Utility */
         .text-center { text-align: center; }
         .text-end { text-align: right; }
-        .text-success { color: #16a34a; }
-        .text-danger { color: #dc2626; }
-        .text-primary { color: #1e3a8a; }
+        .text-success { color: #107C41; }
+        .text-danger { color: #C5221F; }
+        .text-primary { color: #1F4E79; }
         .fw-bold { font-weight: bold; }
         .badge-code {
             font-family: monospace;
-            background-color: #f3f4f6;
-            padding: 2px 4px;
-            border: 1px solid #e5e7eb;
-            border-radius: 3px;
+            background-color: #F4F5F7;
+            padding: 1px 3px;
+            border: 1px solid #D9DDE3;
+            border-radius: 2px;
         }
 
-        /* Tanda Tangan / Signature Footer */
+        /* Tanda Tangan */
         .signature-table {
             width: 100%;
-            margin-top: 25px;
+            margin-top: 20px;
             page-break-inside: avoid;
         }
         .signature-table td {
             width: 50%;
             vertical-align: top;
-            font-size: 10px;
+            font-size: 9px;
         }
         .signature-space {
-            height: 50px;
+            height: 45px;
         }
         .signature-name {
             font-weight: bold;
@@ -137,33 +136,29 @@
             bottom: 0;
             left: 0;
             right: 0;
-            font-size: 8px;
-            color: #9ca3af;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 4px;
-            display: flex;
-            justify-content: space-between;
+            font-size: 7.5px;
+            color: #5B6672;
+            border-top: 1px solid #D9DDE3;
+            padding-top: 3px;
         }
     </style>
     @yield('styles')
 </head>
 <body>
-    <!-- KOP RESMI AGEN JNE -->
+    <!-- KOP RESMI LAPORAN -->
     <table class="kop-table">
         <tr>
             <td style="width: 65%;">
-                <div class="brand-title">AGEN RESMI JNE EXPRESS</div>
-                <div class="report-title">@yield('report-title', 'Laporan Resmi')</div>
+                <div class="brand-title">{{ config('app.nama_usaha', 'AGEN RESMI JNE') }}</div>
+                <div class="report-title">@yield('report-title', 'Laporan Keuangan')</div>
                 <div class="kop-meta" style="margin-top: 3px;">
-                    <strong>Cabang:</strong> {{ $namaCabangKop ?? 'Semua Cabang' }} |
-                    Jl. Tomang Raya No. 11, Jakarta Barat | Telp: (021) 566-7890
+                    Cabang: <strong>{{ $namaCabangKop ?? 'Semua Cabang' }}</strong>
                 </div>
             </td>
             <td style="width: 35%; text-align: right;">
                 <div class="kop-meta">
-                    <strong>Pencetak:</strong> {{ auth()->user()->username ?? 'Owner' }} ({{ strtoupper(auth()->user()->role ?? 'OWNER') }})<br>
-                    <strong>Tanggal Cetak:</strong> {{ date('d-m-Y H:i') }} WIB<br>
-                    <strong>Status Dokumen:</strong> RESMI
+                    Pencetak: <strong>{{ auth()->user()->username ?? 'Petugas' }}</strong> ({{ strtoupper(auth()->user()->role ?? 'ADMIN') }})<br>
+                    Tanggal Cetak: <strong>{{ date('d-m-Y H:i') }}</strong>
                 </div>
             </td>
         </tr>
@@ -181,25 +176,24 @@
     <table class="signature-table">
         <tr>
             <td style="text-align: center;">
-                Mengetahui / Penanggung Jawab,<br>
-                <strong>Admin Operasional</strong>
+                Dibuat Oleh,<br>
+                <strong>Petugas Administrasi</strong>
                 <div class="signature-space"></div>
-                <div class="signature-name">( Admin Operasional )</div>
-                <div class="kop-meta">Petugas Kasir & Operasional</div>
+                <div class="signature-name">( {{ auth()->user()->username ?? 'Petugas' }} )</div>
+                <div class="kop-meta">{{ config('app.nama_usaha', 'Agen Resmi JNE') }}</div>
             </td>
             <td style="text-align: center;">
-                Jakarta, {{ date('d-m-Y') }}<br>
-                Disetujui Oleh,<br>
-                <strong>Owner / Pimpinan Agen</strong>
+                Mengetahui / Menyetujui,<br>
+                <strong>Pimpinan / Pengelola</strong>
                 <div class="signature-space"></div>
-                <div class="signature-name">( {{ auth()->user()->username ?? 'Owner Utama' }} )</div>
-                <div class="kop-meta">Owner Agen Resmi JNE</div>
+                <div class="signature-name">( Pimpinan Usaha )</div>
+                <div class="kop-meta">{{ config('app.nama_usaha', 'Agen Resmi JNE') }}</div>
             </td>
         </tr>
     </table>
 
     <div class="print-footer">
-        <div>Dokumen ini digenerate secara otomatis oleh Sistem Pencatatan JNE Agent.</div>
+        <div>{{ config('app.name', 'Sistem Administrasi Keuangan') }} &bull; Laporan dicetak otomatis pada {{ date('d-m-Y H:i:s') }}</div>
     </div>
 </body>
 </html>
